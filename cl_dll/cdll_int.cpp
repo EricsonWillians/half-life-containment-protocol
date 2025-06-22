@@ -1,17 +1,17 @@
 /***
-*
-*	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
-*	
-*	This product contains software technology licensed from Id 
-*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
-*	All Rights Reserved.
-*
-*   Use, distribution, and modification of this source code and/or resulting
-*   object code is restricted to non-commercial enhancements to products from
-*   Valve LLC.  All other use, distribution, or modification is prohibited
-*   without written permission from Valve LLC.
-*
-****/
+ *
+ *	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
+ *
+ *	This product contains software technology licensed from Id
+ *	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc.
+ *	All Rights Reserved.
+ *
+ *   Use, distribution, and modification of this source code and/or resulting
+ *   object code is restricted to non-commercial enhancements to products from
+ *   Valve LLC.  All other use, distribution, or modification is prohibited
+ *   without written permission from Valve LLC.
+ *
+ ****/
 //
 //  cdll_int.c
 //
@@ -20,15 +20,8 @@
 
 #include "hud.h"
 #include "cl_util.h"
-
-#include "studio_util.h"
-#include "const.h"
-#include "kbutton.h"
-#include "camera.h"
-
 #include "netadr.h"
 #include "parsemsg.h"
-#include "event_api.h"
 
 #if USE_VGUI
 #include "vgui_int.h"
@@ -36,7 +29,7 @@
 #endif
 
 #if GOLDSOURCE_SUPPORT && (XASH_WIN32 || XASH_LINUX || XASH_APPLE) && XASH_X86
-#define USE_FAKE_VGUI	!USE_VGUI
+#define USE_FAKE_VGUI !USE_VGUI
 #if USE_FAKE_VGUI
 #include "VGUI_Panel.h"
 #include "VGUI_App.h"
@@ -46,7 +39,6 @@
 extern "C"
 {
 #include "pm_shared.h"
-#include "pmtrace.h"
 }
 
 #include <string.h>
@@ -59,34 +51,34 @@ TeamFortressViewport *gViewPort = NULL;
 #endif
 mobile_engfuncs_t *gMobileEngfuncs = NULL;
 
-void InitInput( void );
-void EV_HookEvents( void );
-void IN_Commands( void );
+void InitInput(void);
+void EV_HookEvents(void);
+void IN_Commands(void);
 
 /*
-========================== 
-    Initialize
+==========================
+	Initialize
 
 Called when the DLL is first loaded.
 ==========================
 */
-extern "C" 
+extern "C"
 {
-int		DLLEXPORT Initialize( cl_enginefunc_t *pEnginefuncs, int iVersion );
-int		DLLEXPORT HUD_VidInit( void );
-void	DLLEXPORT HUD_Init( void );
-int		DLLEXPORT HUD_Redraw( float flTime, int intermission );
-int		DLLEXPORT HUD_UpdateClientData( client_data_t *cdata, float flTime );
-void	DLLEXPORT HUD_Reset ( void );
-void	DLLEXPORT HUD_PlayerMove( struct playermove_s *ppmove, int server );
-void	DLLEXPORT HUD_PlayerMoveInit( struct playermove_s *ppmove );
-char	DLLEXPORT HUD_PlayerMoveTexture( char *name );
-int		DLLEXPORT HUD_ConnectionlessPacket( const struct netadr_s *net_from, const char *args, char *response_buffer, int *response_buffer_size );
-int		DLLEXPORT HUD_GetHullBounds( int hullnumber, float *mins, float *maxs );
-void	DLLEXPORT HUD_Frame( double time );
-void	DLLEXPORT HUD_VoiceStatus(int entindex, qboolean bTalking);
-void	DLLEXPORT HUD_DirectorMessage( int iSize, void *pbuf );
-int DLLEXPORT HUD_MobilityInterface( mobile_engfuncs_t *gpMobileEngfuncs );
+	int DLLEXPORT Initialize(cl_enginefunc_t *pEnginefuncs, int iVersion);
+	int DLLEXPORT HUD_VidInit(void);
+	void DLLEXPORT HUD_Init(void);
+	int DLLEXPORT HUD_Redraw(float flTime, int intermission);
+	int DLLEXPORT HUD_UpdateClientData(client_data_t *cdata, float flTime);
+	void DLLEXPORT HUD_Reset(void);
+	void DLLEXPORT HUD_PlayerMove(struct playermove_s *ppmove, int server);
+	void DLLEXPORT HUD_PlayerMoveInit(struct playermove_s *ppmove);
+	char DLLEXPORT HUD_PlayerMoveTexture(char *name);
+	int DLLEXPORT HUD_ConnectionlessPacket(const struct netadr_s *net_from, const char *args, char *response_buffer, int *response_buffer_size);
+	int DLLEXPORT HUD_GetHullBounds(int hullnumber, float *mins, float *maxs);
+	void DLLEXPORT HUD_Frame(double time);
+	void DLLEXPORT HUD_VoiceStatus(int entindex, qboolean bTalking);
+	void DLLEXPORT HUD_DirectorMessage(int iSize, void *pbuf);
+	int DLLEXPORT HUD_MobilityInterface(mobile_engfuncs_t *gpMobileEngfuncs);
 }
 
 /*
@@ -96,25 +88,25 @@ HUD_GetHullBounds
   Engine calls this to enumerate player collision hulls, for prediction.  Return 0 if the hullnumber doesn't exist.
 ================================
 */
-int DLLEXPORT HUD_GetHullBounds( int hullnumber, float *mins, float *maxs )
+int DLLEXPORT HUD_GetHullBounds(int hullnumber, float *mins, float *maxs)
 {
 	int iret = 0;
 
-	switch( hullnumber )
+	switch (hullnumber)
 	{
-	case 0:				// Normal player
-		Vector( -16, -16, -36 ).CopyToArray(mins);
-		Vector( 16, 16, 36 ).CopyToArray(maxs);
+	case 0: // Normal player
+		Vector(-16, -16, -36).CopyToArray(mins);
+		Vector(16, 16, 36).CopyToArray(maxs);
 		iret = 1;
 		break;
-	case 1:				// Crouched player
-		Vector( -16, -16, -18 ).CopyToArray(mins);
-		Vector( 16, 16, 18 ).CopyToArray(maxs);
+	case 1: // Crouched player
+		Vector(-16, -16, -18).CopyToArray(mins);
+		Vector(16, 16, 18).CopyToArray(maxs);
 		iret = 1;
 		break;
-	case 2:				// Point based hull
-		Vector( 0, 0, 0 ).CopyToArray(mins);
-		Vector( 0, 0, 0 ).CopyToArray(maxs);
+	case 2: // Point based hull
+		Vector(0, 0, 0).CopyToArray(mins);
+		Vector(0, 0, 0).CopyToArray(maxs);
 		iret = 1;
 		break;
 	}
@@ -130,7 +122,7 @@ HUD_ConnectionlessPacket
   size of the response_buffer, so you must zero it out if you choose not to respond.
 ================================
 */
-int DLLEXPORT HUD_ConnectionlessPacket( const struct netadr_s *net_from, const char *args, char *response_buffer, int *response_buffer_size )
+int DLLEXPORT HUD_ConnectionlessPacket(const struct netadr_s *net_from, const char *args, char *response_buffer, int *response_buffer_size)
 {
 	// Parse stuff from args
 	// int max_buffer_size = *response_buffer_size;
@@ -144,32 +136,32 @@ int DLLEXPORT HUD_ConnectionlessPacket( const struct netadr_s *net_from, const c
 	return 0;
 }
 
-void DLLEXPORT HUD_PlayerMoveInit( struct playermove_s *ppmove )
+void DLLEXPORT HUD_PlayerMoveInit(struct playermove_s *ppmove)
 {
-	PM_Init( ppmove );
+	PM_Init(ppmove);
 }
 
-char DLLEXPORT HUD_PlayerMoveTexture( char *name )
+char DLLEXPORT HUD_PlayerMoveTexture(char *name)
 {
-	return PM_FindTextureType( name );
+	return PM_FindTextureType(name);
 }
 
-void DLLEXPORT HUD_PlayerMove( struct playermove_s *ppmove, int server )
+void DLLEXPORT HUD_PlayerMove(struct playermove_s *ppmove, int server)
 {
-	PM_Move( ppmove, server );
+	PM_Move(ppmove, server);
 }
 
-int DLLEXPORT Initialize( cl_enginefunc_t *pEnginefuncs, int iVersion )
+int DLLEXPORT Initialize(cl_enginefunc_t *pEnginefuncs, int iVersion)
 {
 	gEngfuncs = *pEnginefuncs;
 
-	if( iVersion != CLDLL_INTERFACE_VERSION )
+	if (iVersion != CLDLL_INTERFACE_VERSION)
 		return 0;
 
 	// for now filterstuffcmd is last in the engine interface
-	memcpy( &gEngfuncs, pEnginefuncs, sizeof(cl_enginefunc_t) - sizeof( void * ) );
+	memcpy(&gEngfuncs, pEnginefuncs, sizeof(cl_enginefunc_t) - sizeof(void *));
 
-	if( gEngfuncs.pfnGetCvarPointer( "cl_filterstuffcmd" ) == 0 )
+	if (gEngfuncs.pfnGetCvarPointer("cl_filterstuffcmd") == 0)
 	{
 		gEngfuncs.pfnFilteredClientCmd = gEngfuncs.pfnClientCmd;
 	}
@@ -180,8 +172,8 @@ int DLLEXPORT Initialize( cl_enginefunc_t *pEnginefuncs, int iVersion )
 
 	EV_HookEvents();
 
-	gEngfuncs.pfnRegisterVariable( "cl_game_build_commit", g_VCSInfo_Commit, 0 );
-	gEngfuncs.pfnRegisterVariable( "cl_game_build_branch", g_VCSInfo_Branch, 0 );
+	gEngfuncs.pfnRegisterVariable("cl_game_build_commit", g_VCSInfo_Commit, 0);
+	gEngfuncs.pfnRegisterVariable("cl_game_build_branch", g_VCSInfo_Branch, 0);
 
 	return 1;
 }
@@ -193,7 +185,7 @@ HUD_GetRect
 VGui stub
 =================
 */
-int *HUD_GetRect( void )
+int *HUD_GetRect(void)
 {
 	static int extent[4];
 
@@ -209,14 +201,14 @@ int *HUD_GetRect( void )
 class TeamFortressViewport : public vgui::Panel
 {
 public:
-	TeamFortressViewport(int x,int y,int wide,int tall);
-	void Initialize( void );
+	TeamFortressViewport(int x, int y, int wide, int tall);
+	void Initialize(void);
 
 	virtual void paintBackground();
-	void *operator new( size_t stAllocateBlock );
+	void *operator new(size_t stAllocateBlock);
 };
 
-static TeamFortressViewport* gViewPort = NULL;
+static TeamFortressViewport *gViewPort = NULL;
 
 TeamFortressViewport::TeamFortressViewport(int x, int y, int wide, int tall) : Panel(x, y, wide, tall)
 {
@@ -226,23 +218,23 @@ TeamFortressViewport::TeamFortressViewport(int x, int y, int wide, int tall) : P
 
 void TeamFortressViewport::Initialize()
 {
-	//vgui::App::getInstance()->setCursorOveride( vgui::App::getInstance()->getScheme()->getCursor(vgui::Scheme::scu_none) );
+	// vgui::App::getInstance()->setCursorOveride( vgui::App::getInstance()->getScheme()->getCursor(vgui::Scheme::scu_none) );
 }
 
 void TeamFortressViewport::paintBackground()
 {
-//	int wide, tall;
-//	getParent()->getSize( wide, tall );
-//	setSize( wide, tall );
+	//	int wide, tall;
+	//	getParent()->getSize( wide, tall );
+	//	setSize( wide, tall );
 	int extents[4];
-	getParent()->getAbsExtents(extents[0],extents[1],extents[2],extents[3]);
+	getParent()->getAbsExtents(extents[0], extents[1], extents[2], extents[3]);
 	gEngfuncs.VGui_ViewportPaintBackground(extents);
 }
 
-void *TeamFortressViewport::operator new( size_t stAllocateBlock )
+void *TeamFortressViewport::operator new(size_t stAllocateBlock)
 {
-	void *mem = ::operator new( stAllocateBlock );
-	memset( mem, 0, stAllocateBlock );
+	void *mem = ::operator new(stAllocateBlock);
+	memset(mem, 0, stAllocateBlock);
 	return mem;
 }
 #endif
@@ -257,14 +249,15 @@ so the HUD can reinitialize itself.
 ==========================
 */
 
-int DLLEXPORT HUD_VidInit( void )
+int DLLEXPORT HUD_VidInit(void)
 {
 	gHUD.VidInit();
 #if USE_FAKE_VGUI
-	vgui::Panel* root=(vgui::Panel*)gEngfuncs.VGui_GetPanel();
-	if (root) {
-		gEngfuncs.Con_Printf( "Root VGUI panel exists\n" );
-		root->setBgColor(128,128,0,0);
+	vgui::Panel *root = (vgui::Panel *)gEngfuncs.VGui_GetPanel();
+	if (root)
+	{
+		gEngfuncs.Con_Printf("Root VGUI panel exists\n");
+		root->setBgColor(128, 128, 0, 0);
 
 		if (gViewPort != NULL)
 		{
@@ -272,11 +265,13 @@ int DLLEXPORT HUD_VidInit( void )
 		}
 		else
 		{
-			gViewPort = new TeamFortressViewport(0,0,root->getWide(),root->getTall());
+			gViewPort = new TeamFortressViewport(0, 0, root->getWide(), root->getTall());
 			gViewPort->setParent(root);
 		}
-	} else {
-		gEngfuncs.Con_Printf( "Root VGUI panel does not exist\n" );
+	}
+	else
+	{
+		gEngfuncs.Con_Printf("Root VGUI panel does not exist\n");
 	}
 #elif USE_VGUI
 	VGui_Startup();
@@ -289,16 +284,15 @@ int DLLEXPORT HUD_VidInit( void )
 	HUD_Init
 
 Called whenever the client connects
-to a server.  Reinitializes all 
+to a server.  Reinitializes all
 the hud variables.
 ==========================
 */
 
-void DLLEXPORT HUD_Init( void )
+void DLLEXPORT HUD_Init(void)
 {
 	InitInput();
 	gHUD.Init();
-	CAM_Init();
 #if USE_VGUI
 	Scheme_Init();
 #endif
@@ -313,9 +307,9 @@ redraw the HUD.
 ===========================
 */
 
-int DLLEXPORT HUD_Redraw( float time, int intermission )
+int DLLEXPORT HUD_Redraw(float time, int intermission)
 {
-	gHUD.Redraw( time, intermission );
+	gHUD.Redraw(time, intermission);
 
 	return 1;
 }
@@ -333,73 +327,11 @@ returns 1 if anything has been changed, 0 otherwise.
 ==========================
 */
 
-// ============================================================================
-// PRODUCTION-GRADE UTILITY FUNCTIONS (Now properly defined)
-// ============================================================================
-
-inline float CAM_ClampFloat(float value, float min_val, float max_val)
-{
-    if (value < min_val) return min_val;
-    if (value > max_val) return max_val;
-    return value;
-}
-
-inline float CAM_NormalizeAngle(float angle)
-{
-    while (angle > 180.0f) angle -= 360.0f;
-    while (angle < -180.0f) angle += 360.0f;
-    return angle;
-}
-
-inline bool CAM_IsValidFloat(float f)
-{
-    return !std::isnan(f) && std::isfinite(f);
-}
-
-inline bool CAM_IsValidVector(vec3_t v)
-{
-    return CAM_IsValidFloat(v[0]) && CAM_IsValidFloat(v[1]) && CAM_IsValidFloat(v[2]);
-}
-
-// ============================================================================
-// ENHANCED CONSTANTS FOR SUPREME HORROR EXPERIENCE
-// ============================================================================
-
-#define CAM_SH_OPTIMAL_DISTANCE         75.0f   // Perfect tactical distance
-#define CAM_SH_CROSSHAIR_OFFSET_RIGHT   32.0f   // Enhanced shoulder offset for unobstructed aim
-#define CAM_SH_CROSSHAIR_OFFSET_UP      16.0f   // Improved height offset for clear sight lines
-#define CAM_SH_MIN_DISTANCE             20.0f   // Tighter minimum for intense moments
-#define CAM_SH_MAX_DISTANCE             200.0f  // Extended maximum for tactical overview
-
-#define CAM_SH_SMOOTH_FACTOR            0.12f   // Enhanced smoothing
-#define CAM_SH_ANGLE_SPEED              4.0f    // More responsive control
-#define CAM_SH_TRANSITION_SPEED         5.5f    // Faster transitions
-#define CAM_SH_COLLISION_SPEED          8.0f    // Quick collision recovery
-
-#define CAM_SH_EPSILON                  0.001f  // Precision constant
-#define CAM_SH_COLLISION_RADIUS         18.0f   // Safe collision buffer
-#define CAM_SH_VISIBILITY_THRESHOLD     0.8f    // Higher crosshair visibility requirement
-
-// Horror atmosphere enhancement
-#define CAM_SH_SHAKE_DECAY              0.94f   // Natural shake decay
-#define CAM_SH_TENSION_SCALE            1.6f    // Enhanced tension effects
-#define CAM_SH_CROSSHAIR_PRIORITY       2.5f    // Maximum priority for crosshair
-
-// Movement and animation constants
-#define PM_GLASS_IGNORE                 (1<<2)  // Ignore glass for traces
-#define PM_STUDIO_BOX                   (1<<3)  // Studio box flag for traces
-
-// ============================================================================
-// SUPREME THIRD-PERSON UPDATE FUNCTION
-// ============================================================================
-
 int DLLEXPORT HUD_UpdateClientData(client_data_t *pcldata, float flTime)
 {
-    // Critical input processing
-    IN_Commands();
-    
-    // Call original HUD update with our enhanced data
-    return gHUD.UpdateClientData(pcldata, flTime);
+	IN_Commands();
+
+	return gHUD.UpdateClientData(pcldata, flTime);
 }
 
 /*
@@ -410,7 +342,7 @@ Called at start and end of demos to restore to "non"HUD state.
 ==========================
 */
 
-void DLLEXPORT HUD_Reset( void )
+void DLLEXPORT HUD_Reset(void)
 {
 	gHUD.VidInit();
 }
@@ -423,11 +355,8 @@ Called by engine every frame that client .dll is loaded
 ==========================
 */
 
-void DLLEXPORT HUD_Frame( double time )
+void DLLEXPORT HUD_Frame(double time)
 {
-
-	CAM_Think();
-
 #if USE_VGUI
 	GetClientVoiceMgr()->Frame(time);
 #elif USE_FAKE_VGUI
@@ -446,7 +375,7 @@ Called when a player starts or stops talking.
 ==========================
 */
 
-void DLLEXPORT HUD_VoiceStatus( int entindex, qboolean bTalking )
+void DLLEXPORT HUD_VoiceStatus(int entindex, qboolean bTalking)
 {
 #if USE_VGUI
 	GetClientVoiceMgr()->UpdateSpeakerStatus(entindex, bTalking);
@@ -461,26 +390,26 @@ Called when a director event message was received
 ==========================
 */
 
-void DLLEXPORT HUD_DirectorMessage( int iSize, void *pbuf )
+void DLLEXPORT HUD_DirectorMessage(int iSize, void *pbuf)
 {
-	 gHUD.m_Spectator.DirectorMessage( iSize, pbuf );
+	gHUD.m_Spectator.DirectorMessage(iSize, pbuf);
 }
 
-int DLLEXPORT HUD_MobilityInterface( mobile_engfuncs_t *gpMobileEngfuncs )
+int DLLEXPORT HUD_MobilityInterface(mobile_engfuncs_t *gpMobileEngfuncs)
 {
-	if( gpMobileEngfuncs->version != MOBILITY_API_VERSION )
+	if (gpMobileEngfuncs->version != MOBILITY_API_VERSION)
 		return 1;
 	gMobileEngfuncs = gpMobileEngfuncs;
 	return 0;
 }
 
-bool HUD_MessageBox( const char *msg )
+bool HUD_MessageBox(const char *msg)
 {
-	gEngfuncs.Con_Printf( msg ); // just in case
+	gEngfuncs.Con_Printf(msg); // just in case
 
-	if( IsXashFWGS() )
+	if (IsXashFWGS())
 	{
-		gMobileEngfuncs->pfnSys_Warn( msg );
+		gMobileEngfuncs->pfnSys_Warn(msg);
 		return true;
 	}
 
