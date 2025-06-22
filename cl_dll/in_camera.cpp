@@ -203,7 +203,7 @@ bool CAM_IsValidVector(vec3_t v)
     return CAM_IsValidFloat(v[0]) && CAM_IsValidFloat(v[1]) && CAM_IsValidFloat(v[2]);
 }
 
-void CAM_SafeVectorCopy(vec3_t src, vec3_t dst)
+void CAM_CopyValidVector(vec3_t src, vec3_t dst)
 {
     if (CAM_IsValidVector(src))
     {
@@ -1060,7 +1060,7 @@ void CAM_SetCameraMode(int mode)
     gEngfuncs.Cvar_SetValue("cam_command", 0);
 }
 
-void CAM_SetTensionLevel(float level)
+void CAM_SetCameraTensionLevel(float level)
 {
     if (cam_sh_tension_level)
     {
@@ -1068,7 +1068,7 @@ void CAM_SetTensionLevel(float level)
     }
 }
 
-void CAM_AddAtmosphericShake(float intensity, float duration)
+void CAM_SetAtmosphericShake(float intensity, float duration)
 {
     intensity = CAM_ClampFloat(intensity, 0.0f, 15.0f);
     duration = CAM_ClampFloat(duration, 0.0f, 15.0f);
@@ -1077,14 +1077,14 @@ void CAM_AddAtmosphericShake(float intensity, float duration)
     cam_shake_time = fmax(cam_shake_time, duration);
 }
 
-void CAM_SetColorCorrection(float r, float g, float b)
+void CAM_UpdateColorCorrection(float r, float g, float b)
 {
     g_camera_state.color_correction[0] = CAM_ClampFloat(r, 0.0f, 2.0f);
     g_camera_state.color_correction[1] = CAM_ClampFloat(g, 0.0f, 2.0f);
     g_camera_state.color_correction[2] = CAM_ClampFloat(b, 0.0f, 2.0f);
 }
 
-void CAM_EnableVignette(float intensity)
+void CAM_SetVignetteIntensity(float intensity)
 {
     if (cam_sh_vignette)
     {
