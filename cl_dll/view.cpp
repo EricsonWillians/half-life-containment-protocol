@@ -12,7 +12,7 @@
 #include "cvardef.h"
 #include "usercmd.h"
 #include "const.h"
-
+#include "camera.h"
 #include "entity_state.h"
 #include "cl_entity.h"
 #include "ref_params.h"
@@ -26,6 +26,7 @@
 #include "shake.h"
 #include "hltv.h"
 #include "view.h"
+#include <strings.h>
 
 // Spectator Mode
 extern "C" 
@@ -39,8 +40,8 @@ extern "C"
 
 extern "C" 
 {
-	int CL_IsThirdPerson( void );
-	void CL_CameraOffset( float *ofs );
+	// int CL_IsThirdPerson( void );
+	// void CL_CameraOffset( float *ofs );
 
 	void DLLEXPORT V_CalcRefdef( struct ref_params_s *pparams );
 
@@ -1349,10 +1350,9 @@ int V_FindViewModelByWeaponModel( int weaponindex )
 	{
 		int len = strlen( weaponModel->name );
 		int i = 0;
-
 		while( modelmap[i][0] != NULL )
 		{
-			if( !strnicmp( weaponModel->name, modelmap[i][0], len ) )
+			if( !strncasecmp( weaponModel->name, modelmap[i][0], len ) )
 			{
 				return gEngfuncs.pEventAPI->EV_FindModelIndex( modelmap[i][1] );
 			}

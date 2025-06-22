@@ -9,6 +9,10 @@
 #if !defined( GAMESTUDIOMODELRENDERER_H )
 #define GAMESTUDIOMODELRENDERER_H
 
+#include "StudioModelRenderer.h"
+#include "entity_state.h"
+#include "cl_entity.h"
+
 /*
 ====================
 CGameStudioModelRenderer

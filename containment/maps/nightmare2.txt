@@ -1,0 +1,102 @@
+=======================================================
+Nightmare 2: a Half-Life Deathmatch Experience by DocRock
+=======================================================
+
+Map Name:                       	nightmare2.bsp
+Filesize:                       	mb unzipped
+Author:                         	DocRock
+Author email:                   	docrock64@cox.net
+Homepage:		http://docrocksmaps.homestead.com/docmaps.html                    
+wadincluded in map:          	sd.wad, haunted.wad
+
+=======================================================
+LEVEL DESCRIPTION:
+
+Single Player:                 		No
+Co-Op:                         		No
+Deathmatch:                     		Yes
+
+Suggested Players:             		6 - 12
+New Textures:                   		Yes 
+New Sounds:                     		Yes
+New Models:                     		Yes 
+
+Map description:                		A Half-Life deathmatch map in an eerie setting
+				I tried to make the haunted house exterior look as 					much like the haunted house from
+				the beginning of Scooby Doo cartoons.  Let me know 					how I did.												
+=======================================================
+CONSTRUCTION:
+
+base map:                       		None
+prefabs:                        		None
+editor used:                    	 	Hammer 3.5
+utilities used:                 		Zoner's Half-Life compile tools, Paintshop Pro 7, Wally 					Half-Life model viewer	
+known bugs:                     		None
+compile machine:                		Intel Pentium 4   2.53 GHZ
+compile time:                   		20 minutes
+
+=======================================================
+INSTALLATION:
+
+1. 	Run Winzip and unzip nightmare2.zip.
+
+2. 	Open the nightmare2 folder and place the nightmare2.bsp, 				nightmare2.res, and nightmare2.tx in your valve/maps folder.  
+
+3.	Place the 6 (six) grave256_.tga files into your valve/gfx/env folder.
+
+4.	Put the wavs in a folder called nite2 and put it in the valve/sound folder.
+
+5.	Place the nite2 folder (containing map models) inside the valve/models folder.
+
+6. 	Place the fixflame.spr in your valve/sprites folder.
+
+
+=======================================================
+OTHER LEVELS BY DOCROCK:
+
+elite, squidsville, kad_honor, kitkat_egyptian, mario_air, sandspyre, kitkat_space, greyscale, kitkat_express, kitkat_factory, hardcore, kitkat_beach, kitkat_klub, Get_Shorty, Farmland2, Cliffside2, Tigger, Scooby_Doo, etc etc etc
+
+=======================================================
+SPECIAL THANKS:
+
+To my babykitkat, my lover, my sweetheart, my wife.  I love you!!  My #1 fan, thanks baby
+for playtesting and helping me with this awesome map!  I DEDICATE THIS TO YOU!
+
+Thanks to qUiCkSiLvEr for the awesome bat re-wored model. 
+
+BETA TESTERS:
+babykitkat
+
+
+OTHER THANKS:
+
+Kevin "79DieselRabbit" Worrel           	     	dr_ice skybox     http://www.planetquake.com/darkside
+	
+=======================================================
+DOC'S NEXT MAP....COMING SOON:
+
+HL2 map
+=======================================================
+
+Authors MAY use this level as a base to build additional levels as long 
+as you give me credit in your read.me as using this map as a base to 
+build your level.
+
+You MUST NOT distribute this level UNLESS you INCLUDE THIS FILE WITH
+NO MODIFICATIONS. If you don't co-operate, then DON'T DISTRIBUTE IT
+IN ANY FORM.
+
+This map includes textures used in other Half-Life modifications as well as textures
+used in other PC games.  It is not my intention to steal these textures and use them
+for personal gain.  I use these textures because I think they are very well done and
+am honored to use them.  Please do not be offended that I borrowed your
+textures if you are the author of them.
+
+This LEVEL may be distributed ONLY over the Internet.
+
+You are NOT authorized to put this LEVEL on any CD or distribute it in
+any way without my written permission.
+
+PLEASE PLEASE PLEASE email me with any comments about this map or any 
+of my other maps because I love feedback good or bad...and I will do my 
+best to answer any and all emails regarding my maps.

@@ -1,0 +1,18 @@
+game "Containment Protocol"
+url_info "www.containmentprotocol.com"
+url_dl ""
+version "1.0"
+size "50000"
+svonly "0"
+secure "1"
+type "singleplayer_only"
+fallback_dir "valve"
+
+// --- DLL Configuration ---
+// For 32-bit engines
+gamedll "dlls/hl.so"
+cldll_dll "cl_dlls/client.so"
+
+// For 64-bit engines (Xash3D FWGS will use these)
+gamedll_amd64 "dlls/hl_amd64.so"
+client_amd64 "cl_dlls/client_amd64.so"

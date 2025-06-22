@@ -20,8 +20,15 @@
 
 #include "hud.h"
 #include "cl_util.h"
+
+#include "studio_util.h"
+#include "const.h"
+#include "kbutton.h"
+#include "camera.h"
+
 #include "netadr.h"
 #include "parsemsg.h"
+#include "event_api.h"
 
 #if USE_VGUI
 #include "vgui_int.h"
@@ -39,6 +46,7 @@
 extern "C"
 {
 #include "pm_shared.h"
+#include "pmtrace.h"
 }
 
 #include <string.h>
@@ -290,6 +298,7 @@ void DLLEXPORT HUD_Init( void )
 {
 	InitInput();
 	gHUD.Init();
+	CAM_Init();
 #if USE_VGUI
 	Scheme_Init();
 #endif
@@ -324,11 +333,73 @@ returns 1 if anything has been changed, 0 otherwise.
 ==========================
 */
 
-int DLLEXPORT HUD_UpdateClientData( client_data_t *pcldata, float flTime )
-{
-	IN_Commands();
+// ============================================================================
+// PRODUCTION-GRADE UTILITY FUNCTIONS (Now properly defined)
+// ============================================================================
 
-	return gHUD.UpdateClientData( pcldata, flTime );
+inline float CAM_ClampFloat(float value, float min_val, float max_val)
+{
+    if (value < min_val) return min_val;
+    if (value > max_val) return max_val;
+    return value;
+}
+
+inline float CAM_NormalizeAngle(float angle)
+{
+    while (angle > 180.0f) angle -= 360.0f;
+    while (angle < -180.0f) angle += 360.0f;
+    return angle;
+}
+
+inline bool CAM_IsValidFloat(float f)
+{
+    return !std::isnan(f) && std::isfinite(f);
+}
+
+inline bool CAM_IsValidVector(vec3_t v)
+{
+    return CAM_IsValidFloat(v[0]) && CAM_IsValidFloat(v[1]) && CAM_IsValidFloat(v[2]);
+}
+
+// ============================================================================
+// ENHANCED CONSTANTS FOR SUPREME HORROR EXPERIENCE
+// ============================================================================
+
+#define CAM_SH_OPTIMAL_DISTANCE         75.0f   // Perfect tactical distance
+#define CAM_SH_CROSSHAIR_OFFSET_RIGHT   32.0f   // Enhanced shoulder offset for unobstructed aim
+#define CAM_SH_CROSSHAIR_OFFSET_UP      16.0f   // Improved height offset for clear sight lines
+#define CAM_SH_MIN_DISTANCE             20.0f   // Tighter minimum for intense moments
+#define CAM_SH_MAX_DISTANCE             200.0f  // Extended maximum for tactical overview
+
+#define CAM_SH_SMOOTH_FACTOR            0.12f   // Enhanced smoothing
+#define CAM_SH_ANGLE_SPEED              4.0f    // More responsive control
+#define CAM_SH_TRANSITION_SPEED         5.5f    // Faster transitions
+#define CAM_SH_COLLISION_SPEED          8.0f    // Quick collision recovery
+
+#define CAM_SH_EPSILON                  0.001f  // Precision constant
+#define CAM_SH_COLLISION_RADIUS         18.0f   // Safe collision buffer
+#define CAM_SH_VISIBILITY_THRESHOLD     0.8f    // Higher crosshair visibility requirement
+
+// Horror atmosphere enhancement
+#define CAM_SH_SHAKE_DECAY              0.94f   // Natural shake decay
+#define CAM_SH_TENSION_SCALE            1.6f    // Enhanced tension effects
+#define CAM_SH_CROSSHAIR_PRIORITY       2.5f    // Maximum priority for crosshair
+
+// Movement and animation constants
+#define PM_GLASS_IGNORE                 (1<<2)  // Ignore glass for traces
+#define PM_STUDIO_BOX                   (1<<3)  // Studio box flag for traces
+
+// ============================================================================
+// SUPREME THIRD-PERSON UPDATE FUNCTION
+// ============================================================================
+
+int DLLEXPORT HUD_UpdateClientData(client_data_t *pcldata, float flTime)
+{
+    // Critical input processing
+    IN_Commands();
+    
+    // Call original HUD update with our enhanced data
+    return gHUD.UpdateClientData(pcldata, flTime);
 }
 
 /*
@@ -354,6 +425,9 @@ Called by engine every frame that client .dll is loaded
 
 void DLLEXPORT HUD_Frame( double time )
 {
+
+	CAM_Think();
+
 #if USE_VGUI
 	GetClientVoiceMgr()->Frame(time);
 #elif USE_FAKE_VGUI

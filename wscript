@@ -273,6 +273,8 @@ def configure(conf):
 				conf.undefine(p[0])
 			else:
 				conf.env[p[0]] = p[1]
+				if p[0] == 'GAMEDIR':
+					conf.define('GAMEDIR', p[1], quote=True)
 			conf.end_msg(p[1])
 	if conf.env.HLDEMO_BUILD and conf.env.OEM_BUILD:
 		conf.fatal('Don\'t mix Demo and OEM builds!')
