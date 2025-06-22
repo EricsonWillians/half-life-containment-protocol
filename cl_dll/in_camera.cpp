@@ -33,7 +33,7 @@ typedef struct point_s
     int y;
 } POINT;
 #define GetCursorPos(x)
-#define SetCursorPos(x,y)
+#define SetCursorPos(x, y)
 #endif
 
 float CL_KeyState(kbutton_t *key);
@@ -44,34 +44,34 @@ extern cl_enginefunc_t gEngfuncs;
 //================================================
 
 // Over-the-shoulder positioning - Optimized for crosshair visibility
-#define CAM_SHOULDER_DISTANCE       75.0f   // Perfect tactical distance
-#define CAM_SHOULDER_RIGHT_OFFSET   22.0f   // Right shoulder offset
-#define CAM_SHOULDER_UP_OFFSET      8.0f    // Height offset above center
-#define CAM_SHOULDER_FORWARD_BIAS   -4.0f   // Slight forward bias for better view
+#define CAM_SHOULDER_DISTANCE 75.0f     // Perfect tactical distance
+#define CAM_SHOULDER_RIGHT_OFFSET 22.0f // Right shoulder offset
+#define CAM_SHOULDER_UP_OFFSET 8.0f     // Height offset above center
+#define CAM_SHOULDER_FORWARD_BIAS -4.0f // Slight forward bias for better view
 
 // Distance constraints
-#define CAM_MIN_DISTANCE           20.0f
-#define CAM_MAX_DISTANCE           150.0f
-#define CAM_COLLISION_BUFFER       12.0f
+#define CAM_MIN_DISTANCE 20.0f
+#define CAM_MAX_DISTANCE 150.0f
+#define CAM_COLLISION_BUFFER 12.0f
 
 // Smoothing and responsiveness
-#define CAM_SMOOTH_FACTOR          0.12f    // Camera position smoothing
-#define CAM_ANGLE_SMOOTH           0.18f    // Angle smoothing
-#define CAM_COLLISION_SMOOTH       0.25f    // Collision response speed
+#define CAM_SMOOTH_FACTOR 0.12f    // Camera position smoothing
+#define CAM_ANGLE_SMOOTH 0.18f     // Angle smoothing
+#define CAM_COLLISION_SMOOTH 0.25f // Collision response speed
 
 // Mouse sensitivity multipliers
-#define CAM_MOUSE_YAW_SCALE        0.022f   // Horizontal sensitivity
-#define CAM_MOUSE_PITCH_SCALE      0.018f   // Vertical sensitivity (slightly reduced)
+#define CAM_MOUSE_YAW_SCALE 0.022f   // Horizontal sensitivity
+#define CAM_MOUSE_PITCH_SCALE 0.018f // Vertical sensitivity (slightly reduced)
 
 // Angle constraints for over-the-shoulder
-#define CAM_MAX_PITCH              85.0f
-#define CAM_MIN_PITCH              -85.0f
-#define CAM_MAX_YAW                180.0f
-#define CAM_MIN_YAW                -180.0f
+#define CAM_MAX_PITCH 85.0f
+#define CAM_MIN_PITCH -85.0f
+#define CAM_MAX_YAW 180.0f
+#define CAM_MIN_YAW -180.0f
 
 // Safety and validation
-#define CAM_EPSILON                0.001f
-#define CAM_MAX_TRACE_DISTANCE     2048.0f
+#define CAM_EPSILON 0.001f
+#define CAM_MAX_TRACE_DISTANCE 2048.0f
 
 //================================================
 // GLOBAL VARIABLES
@@ -135,17 +135,23 @@ bool CAM_IsValidVector(vec3_t v)
 
 float CAM_ClampFloat(float value, float min_val, float max_val)
 {
-    if (!CAM_IsValidFloat(value)) return min_val;
-    if (value < min_val) return min_val;
-    if (value > max_val) return max_val;
+    if (!CAM_IsValidFloat(value))
+        return min_val;
+    if (value < min_val)
+        return min_val;
+    if (value > max_val)
+        return max_val;
     return value;
 }
 
 float CAM_NormalizeAngle(float angle)
 {
-    if (!CAM_IsValidFloat(angle)) return 0.0f;
-    while (angle > 180.0f) angle -= 360.0f;
-    while (angle < -180.0f) angle += 360.0f;
+    if (!CAM_IsValidFloat(angle))
+        return 0.0f;
+    while (angle > 180.0f)
+        angle -= 360.0f;
+    while (angle < -180.0f)
+        angle += 360.0f;
     return angle;
 }
 
@@ -164,7 +170,8 @@ float CAM_GetCvarFloat(cvar_t *cvar, float default_value)
 
 float VectorLength(vec3_t v)
 {
-    if (!CAM_IsValidVector(v)) return 0.0f;
+    if (!CAM_IsValidVector(v))
+        return 0.0f;
     return sqrtf(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
 }
 
@@ -176,7 +183,8 @@ bool CAM_TraceCollision(vec3_t start, vec3_t end, vec3_t result)
 {
     if (!CAM_IsValidVector(start) || !CAM_IsValidVector(end) || !result)
     {
-        if (result) VectorCopy(end, result);
+        if (result)
+            VectorCopy(end, result);
         return false;
     }
 
@@ -187,7 +195,7 @@ bool CAM_TraceCollision(vec3_t start, vec3_t end, vec3_t result)
     vec3_t trace_dir;
     VectorSubtract(end, start, trace_dir);
     float trace_dist = VectorLength(trace_dir);
-    
+
     if (trace_dist < CAM_EPSILON)
     {
         VectorCopy(start, result);
@@ -204,24 +212,24 @@ bool CAM_TraceCollision(vec3_t start, vec3_t end, vec3_t result)
     if (gEngfuncs.pEventAPI && gEngfuncs.pEventAPI->EV_SetUpPlayerPrediction)
     {
         gEngfuncs.pEventAPI->EV_SetUpPlayerPrediction(false, true);
-        
+
         if (gEngfuncs.pEventAPI->EV_PushPMStates)
             gEngfuncs.pEventAPI->EV_PushPMStates();
-        
+
         cl_entity_t *local = gEngfuncs.GetLocalPlayer();
         int player_idx = local ? local->index : -1;
-        
+
         if (gEngfuncs.pEventAPI->EV_SetSolidPlayers)
             gEngfuncs.pEventAPI->EV_SetSolidPlayers(player_idx);
-        
+
         if (gEngfuncs.pEventAPI->EV_SetTraceHull)
             gEngfuncs.pEventAPI->EV_SetTraceHull(2);
-        
+
         if (gEngfuncs.pEventAPI->EV_PlayerTrace)
         {
             gEngfuncs.pEventAPI->EV_PlayerTrace(start, end, PM_GLASS_IGNORE | PM_STUDIO_BOX, player_idx, &trace);
         }
-        
+
         if (gEngfuncs.pEventAPI->EV_PopPMStates)
             gEngfuncs.pEventAPI->EV_PopPMStates();
     }
@@ -246,10 +254,10 @@ bool CAM_TraceCollision(vec3_t start, vec3_t end, vec3_t result)
 // FIXED OVER-THE-SHOULDER CAMERA CALCULATION
 //================================================
 
-void CAM_CalculateShoulderPosition(vec3_t player_origin, vec3_t view_angles, 
-                                  float distance, vec3_t *cam_origin, vec3_t *cam_angles)
+void CAM_CalculateShoulderPosition(vec3_t player_origin, vec3_t view_angles,
+                                   float distance, vec3_t *cam_origin, vec3_t *cam_angles)
 {
-    if (!CAM_IsValidVector(player_origin) || !CAM_IsValidVector(view_angles) || 
+    if (!CAM_IsValidVector(player_origin) || !CAM_IsValidVector(view_angles) ||
         !cam_origin || !cam_angles)
         return;
 
@@ -283,7 +291,7 @@ void CAM_CalculateShoulderPosition(vec3_t player_origin, vec3_t view_angles,
     // STEP 2: Apply RIGHT shoulder offset (this creates the over-shoulder effect)
     vec3_t shoulder_pos;
     VectorMA(base_pos, shoulder_right, right, shoulder_pos);
-    
+
     // STEP 3: Apply vertical offset
     vec3_t final_ideal_pos;
     VectorMA(shoulder_pos, shoulder_up, up, final_ideal_pos);
@@ -294,7 +302,7 @@ void CAM_CalculateShoulderPosition(vec3_t player_origin, vec3_t view_angles,
     // Check for collisions
     vec3_t final_pos;
     bool collision_enabled = cam_collision_enabled ? (cam_collision_enabled->value != 0.0f) : true;
-    
+
     if (collision_enabled)
     {
         if (CAM_TraceCollision(eye_origin, final_ideal_pos, final_pos))
@@ -303,18 +311,18 @@ void CAM_CalculateShoulderPosition(vec3_t player_origin, vec3_t view_angles,
             vec3_t collision_dir;
             VectorSubtract(final_pos, eye_origin, collision_dir);
             float collision_dist = VectorLength(collision_dir);
-            
+
             if (collision_dist > CAM_MIN_DISTANCE)
             {
                 // Maintain the shoulder offset even when colliding
                 VectorNormalize(collision_dir);
                 vec3_t safe_back_pos;
                 VectorMA(eye_origin, collision_dist - CAM_COLLISION_BUFFER, collision_dir, safe_back_pos);
-                
+
                 // Re-apply shoulder offset proportionally
                 float offset_scale = (collision_dist - CAM_COLLISION_BUFFER) / shoulder_distance;
                 offset_scale = CAM_ClampFloat(offset_scale, 0.3f, 1.0f); // Minimum 30% offset
-                
+
                 VectorMA(safe_back_pos, shoulder_right * offset_scale, right, *cam_origin);
                 (*cam_origin)[2] += shoulder_up * offset_scale;
             }
@@ -338,11 +346,11 @@ void CAM_CalculateShoulderPosition(vec3_t player_origin, vec3_t view_angles,
 
     // Set camera angles to look toward crosshair target
     VectorCopy(cam_view_angles, *cam_angles);
-    
+
     // Calculate crosshair world position for perfect aiming
     vec3_t crosshair_target;
     VectorMA(eye_origin, 8192.0f, forward, crosshair_target);
-    
+
     // Store crosshair info for HUD
     VectorCopy(crosshair_target, g_camera_state.crosshair_world_pos);
     g_camera_state.crosshair_visibility = 1.0f;
@@ -361,10 +369,10 @@ void DLLEXPORT CAM_Think(void)
     float current_time = gEngfuncs.GetClientTime();
     cam_frametime = current_time - cam_last_time;
     cam_last_time = current_time;
-    
+
     if (!CAM_IsValidFloat(cam_frametime) || cam_frametime <= 0.0f)
         cam_frametime = 0.016f;
-    
+
     cam_frametime = CAM_ClampFloat(cam_frametime, 0.001f, 0.1f);
 
     // Get player information
@@ -389,12 +397,12 @@ void DLLEXPORT CAM_Think(void)
     int cam_cmd = cam_command ? (int)cam_command->value : 0;
     switch (cam_cmd)
     {
-        case 1:
-            CAM_ToThirdPerson();
-            break;
-        case 2:
-            CAM_ToFirstPerson();
-            break;
+    case 1:
+        CAM_ToThirdPerson();
+        break;
+    case 2:
+        CAM_ToFirstPerson();
+        break;
     }
 
     // Early exit for first person
@@ -414,7 +422,7 @@ void DLLEXPORT CAM_Think(void)
     cam_angles[PITCH] = cam_ofs[PITCH];
     cam_angles[YAW] = cam_ofs[YAW];
     cam_angles[ROLL] = 0.0f;
-    
+
     float distance = cam_ofs[2];
     distance = CAM_ClampFloat(distance, CAM_MIN_DISTANCE, CAM_MAX_DISTANCE);
 
@@ -429,10 +437,10 @@ void DLLEXPORT CAM_Think(void)
 
         int center_x = gEngfuncs.GetWindowCenterX();
         int center_y = gEngfuncs.GetWindowCenterY();
-        
+
         int mouse_delta_x = current_mouse.x - center_x;
         int mouse_delta_y = current_mouse.y - center_y;
-        
+
         if (abs(mouse_delta_x) > 0 || abs(mouse_delta_y) > 0)
         {
             flSensitivity = gHUD.GetSensitivity();
@@ -440,22 +448,22 @@ void DLLEXPORT CAM_Think(void)
                 flSensitivity = 1.0f;
 
             float mouse_scale = CAM_GetCvarFloat(cam_mouse_sensitivity, 1.0f);
-            
+
             // Calculate mouse movement and apply to CAMERA angles
             float yaw_delta = (float)mouse_delta_x * CAM_MOUSE_YAW_SCALE * flSensitivity * mouse_scale;
             float pitch_delta = (float)mouse_delta_y * CAM_MOUSE_PITCH_SCALE * flSensitivity * mouse_scale;
-            
+
             yaw_delta = CAM_ClampFloat(yaw_delta, -15.0f, 15.0f);
             pitch_delta = CAM_ClampFloat(pitch_delta, -12.0f, 12.0f);
-            
+
             // Apply to camera angles
             cam_angles[YAW] -= yaw_delta;
             cam_angles[PITCH] += pitch_delta;
-            
+
             // Normalize and constrain
             cam_angles[YAW] = CAM_NormalizeAngle(cam_angles[YAW]);
             cam_angles[PITCH] = CAM_ClampFloat(cam_angles[PITCH], CAM_MIN_PITCH, CAM_MAX_PITCH);
-            
+
             SetCursorPos(center_x, center_y);
         }
     }
@@ -464,16 +472,16 @@ void DLLEXPORT CAM_Think(void)
         // Distance control
         POINT current_mouse;
         GetCursorPos(&current_mouse);
-        
+
         int center_y = gEngfuncs.GetWindowCenterY();
         int mouse_delta_y = current_mouse.y - center_y;
-        
+
         if (abs(mouse_delta_y) > 0)
         {
             float dist_delta = (float)mouse_delta_y * 0.5f;
             distance += dist_delta;
             distance = CAM_ClampFloat(distance, CAM_MIN_DISTANCE, CAM_MAX_DISTANCE);
-            
+
             SetCursorPos(gEngfuncs.GetWindowCenterX(), center_y);
         }
     }
@@ -481,7 +489,7 @@ void DLLEXPORT CAM_Think(void)
     // Keyboard controls
     float angle_speed = 90.0f * cam_frametime;
     float dist_speed = 60.0f * cam_frametime;
-    
+
     if (CL_KeyState(&cam_pitchup))
         cam_angles[PITCH] += angle_speed;
     else if (CL_KeyState(&cam_pitchdown))
@@ -507,21 +515,21 @@ void DLLEXPORT CAM_Think(void)
     //================================================
 
     bool snap_to = cam_snapto ? (cam_snapto->value != 0.0f) : false;
-    
+
     if (!snap_to)
     {
         float smooth_factor = CAM_GetCvarFloat(cam_smooth_movement, 1.0f);
         float angle_smooth = CAM_ANGLE_SMOOTH * smooth_factor;
         float pos_smooth = CAM_SMOOTH_FACTOR * smooth_factor;
-        
+
         // Smooth angles
         float pitch_diff = cam_angles[PITCH] - cam_ofs[PITCH];
         float yaw_diff = CAM_AngleDifference(cam_ofs[YAW], cam_angles[YAW]);
-        
+
         cam_ofs[PITCH] += pitch_diff * angle_smooth;
         cam_ofs[YAW] += yaw_diff * angle_smooth;
         cam_ofs[YAW] = CAM_NormalizeAngle(cam_ofs[YAW]);
-        
+
         // Smooth distance
         cam_ofs[2] += (distance - cam_ofs[2]) * pos_smooth;
     }
@@ -537,13 +545,13 @@ void DLLEXPORT CAM_Think(void)
     //================================================
 
     vec3_t final_cam_origin, final_cam_angles;
-    CAM_CalculateShoulderPosition(player_origin, viewangles, cam_ofs[2], 
-                                 &final_cam_origin, &final_cam_angles);
+    CAM_CalculateShoulderPosition(player_origin, viewangles, cam_ofs[2],
+                                  &final_cam_origin, &final_cam_angles);
 
     // CRITICAL FIX: Don't sync view angles back to camera!
     // The camera should be independent of player view angles
     // Only sync if we need crosshair alignment
-    
+
     // For debugging - you can uncomment this to see where the camera should be
     /*
     vec3_t debug_angles;
@@ -553,10 +561,14 @@ void DLLEXPORT CAM_Think(void)
     */
 
     // Update CVars for debugging
-    if (cam_idealpitch) cam_idealpitch->value = cam_ofs[PITCH];
-    if (cam_idealyaw) cam_idealyaw->value = cam_ofs[YAW];
-    if (cam_idealdist) cam_idealdist->value = cam_ofs[2];
-    if (cam_command) cam_command->value = 0;
+    if (cam_idealpitch)
+        cam_idealpitch->value = cam_ofs[PITCH];
+    if (cam_idealyaw)
+        cam_idealyaw->value = cam_ofs[YAW];
+    if (cam_idealdist)
+        cam_idealdist->value = cam_ofs[2];
+    if (cam_command)
+        cam_command->value = 0;
 }
 
 //================================================
@@ -591,28 +603,30 @@ void CAM_ToThirdPerson(void)
     {
         vec3_t viewangles;
         gEngfuncs.GetViewAngles(viewangles);
-        
+
         cam_thirdperson = 1;
-        
+
         // CRITICAL FIX: Properly initialize camera offset
         cam_ofs[PITCH] = CAM_IsValidFloat(viewangles[PITCH]) ? viewangles[PITCH] : 0.0f;
         cam_ofs[YAW] = CAM_IsValidFloat(viewangles[YAW]) ? viewangles[YAW] : 0.0f;
         cam_ofs[2] = CAM_GetCvarFloat(cam_shoulder_distance, CAM_SHOULDER_DISTANCE);
-        
+
         // Debug print
-        gEngfuncs.Con_Printf("Camera activated: Distance=%.1f, Right=%.1f, Up=%.1f\n", 
-                           cam_ofs[2], 
-                           CAM_GetCvarFloat(cam_shoulder_right, CAM_SHOULDER_RIGHT_OFFSET),
-                           CAM_GetCvarFloat(cam_shoulder_up, CAM_SHOULDER_UP_OFFSET));
+        gEngfuncs.Con_Printf("Camera activated: Distance=%.1f, Right=%.1f, Up=%.1f\n",
+                             cam_ofs[2],
+                             CAM_GetCvarFloat(cam_shoulder_right, CAM_SHOULDER_RIGHT_OFFSET),
+                             CAM_GetCvarFloat(cam_shoulder_up, CAM_SHOULDER_UP_OFFSET));
     }
 
-    if (cam_command) cam_command->value = 0;
+    if (cam_command)
+        cam_command->value = 0;
 }
 
 void CAM_ToFirstPerson(void)
 {
     cam_thirdperson = 0;
-    if (cam_command) cam_command->value = 0;
+    if (cam_command)
+        cam_command->value = 0;
 }
 
 void CAM_ToggleSnapto(void)
@@ -637,7 +651,7 @@ void CAM_StartMouseMove(void)
             cam_mousemove = 1;
             iMouseInUse = 1;
             GetCursorPos(&cam_mouse);
-            
+
             float sensitivity = gHUD.GetSensitivity();
             if (CAM_IsValidFloat(sensitivity))
             {
@@ -674,7 +688,7 @@ void CAM_StartDistance(void)
             cam_mousemove = 1;
             iMouseInUse = 1;
             GetCursorPos(&cam_mouse);
-            
+
             float sensitivity = gHUD.GetSensitivity();
             if (CAM_IsValidFloat(sensitivity))
             {
@@ -709,8 +723,8 @@ void CAM_EndDistance(void)
 
 int DLLEXPORT CL_IsThirdPerson(void)
 {
-    return cam_thirdperson || (g_iUser1 && gEngfuncs.GetLocalPlayer() && 
-                              (g_iUser2 == gEngfuncs.GetLocalPlayer()->index));
+    return cam_thirdperson || (g_iUser1 && gEngfuncs.GetLocalPlayer() &&
+                               (g_iUser2 == gEngfuncs.GetLocalPlayer()->index));
 }
 
 void DLLEXPORT CL_CameraOffset(float *ofs)
@@ -798,10 +812,12 @@ void CAM_ClearStates(void)
     cam_mousemove = 0;
     cam_distancemove = 0;
     iMouseInUse = 0;
-    
+
     VectorClear(cam_ofs);
-    if (cam_command) cam_command->value = 0;
-    if (cam_snapto) cam_snapto->value = 0;
+    if (cam_command)
+        cam_command->value = 0;
+    if (cam_snapto)
+        cam_snapto->value = 0;
 
     // Clear enhanced state
     memset(&g_camera_state, 0, sizeof(g_camera_state));
@@ -831,15 +847,15 @@ float MoveToward(float cur, float goal, float maxspeed)
 {
     if (!CAM_IsValidFloat(cur) || !CAM_IsValidFloat(goal) || !CAM_IsValidFloat(maxspeed))
         return cur;
-    
+
     if (fabs(cur - goal) < CAM_EPSILON)
         return goal;
-    
+
     float diff = goal - cur;
     float step = diff * 0.2f;
-    
+
     if (fabs(step) > maxspeed)
         step = (step > 0) ? maxspeed : -maxspeed;
-    
+
     return cur + step;
 }
