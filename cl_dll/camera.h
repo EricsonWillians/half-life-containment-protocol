@@ -197,6 +197,8 @@ void CAM_CalculateAtmosphericEffects(void);
 void CAM_ApplyScreenEffects(void);
 bool CAM_IsPlayerInZone(int zone_id);
 float CAM_MoveTowardTactical(float cur, float goal, float maxspeed);
+float CAM_GetCvarValue(const char *cvar_name, float default_value);
+bool CAM_IsValidFloat(float value);
 
 float CAM_EaseInOut(float t);
 float CAM_EaseIn(float t);
